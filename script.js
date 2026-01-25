@@ -44,6 +44,7 @@ try {
 //getting the saving time from the localStorage
 let questionInterval;
 function QuestionTime() {
+  clearInterval(questionInterval); // clearing the first
   let timerText = localStorage.getItem("questionTime") || 30;
   timerText = Number(timerText);
   questionInterval = setInterval(() => {
@@ -74,21 +75,18 @@ startBtn.addEventListener("click", (e) => {
     mainContainer.classList,
   );
 
-  const isTimeAvailable = localStorage.getItem("questionTime");
-  if (isTimeAvailable == NaN) {
-    localStorage.setItem("questionTime", 30);
-  }
   QuestionTime();
 });
 
 // resetBtn
 
 resetBtn.addEventListener("click", (e) => {
+  // --- clearing the localStorage --- //
   localStorage.clear();
-  // except this window.location use another method to apply the style to the mainContainer, initialState, and footer
   initialState.classList.remove("hide");
   mainContainer.classList.add("hide");
   footer.classList.add("hide");
+  // --- stopping the time that runs in the background --- //
   clearInterval(questionInterval);
 });
 
@@ -160,7 +158,7 @@ let allAnswers = [
   [`<ol> , <ul> , <li> , <list>`],
 ];
 
-// picking the random question
+// getting the question display elements from html
 let questionDisplayDiv = document.querySelector(".questionDisplayDiv>p");
 let questionCounterPara = document.querySelector(".questionCounter>p>span");
 let questionCounter = localStorage.getItem("questionCounter") || 0;
@@ -178,11 +176,11 @@ questionCounterPara.innerText = questionCounter;
 let nextBtn = document.querySelector(".nextButton>p");
 
 function questionFun() {
+  questionCounter++;
   if (questionCounter >= 24) {
     localStorage.setItem("questionCounter", 0);
     questionCounter = 0;
   }
-  questionCounter++;
   localStorage.setItem("questionCounter", questionCounter);
   questionDisplayDiv.innerText = allQuestions[questionCounter];
   questionCounterPara.innerText = questionCounter;
@@ -190,13 +188,11 @@ function questionFun() {
 
 function answersFun() {
   let index = 1;
-
   separatedAnswers[questionCounter].forEach((innerArray) => {
     const el = document.querySelector(`.answer-${index}>p`);
     if (el) {
       el.innerText = innerArray;
     } else {
-      console.log("elements are not available");
     }
     index++;
   });
@@ -217,6 +213,9 @@ nextBtn.addEventListener("click", () => {
   questionFun();
   answersFun();
   savingAnswers();
+  clearInterval(questionInterval);
+  localStorage.removeItem("questionTime");
+  QuestionTime();
 });
 
 resetBtn.addEventListener("click", () => {
