@@ -1,94 +1,12 @@
-const html = document.querySelector("html");
-const initialState = document.querySelector(".initialState");
 const startBtn = document.querySelector(".startBtn");
+const startingState = document.querySelector(".initialState");
+const nextState = document.querySelector(".mainContainer");
+const timeDisplayPara = document.querySelector(".timePara");
 const footer = document.querySelector("footer");
-const mainContainer = document.querySelector(".mainContainer");
-const resetBtn = document.querySelector(".resetBtn");
-const timer = document.querySelector(".timeDiv p>span");
-
-// checking is they hide or not
-try {
-  const IsMainContainerHide = localStorage
-    .getItem("mainContainer_class")
-    .split(" ")
-    .includes("hide");
-  const isFooterHide = localStorage
-    .getItem("footer_class")
-    .split(" ")
-    .includes("hide");
-
-  const isInitializeHide = localStorage
-    .getItem("initialState_class")
-    .split(" ")
-    .includes("hide");
-
-  if (IsMainContainerHide) {
-    mainContainer.classList.add("hide");
-  } else {
-    mainContainer.classList.remove("hide");
-  }
-
-  if (isFooterHide) {
-    footer.classList.add("hide");
-  } else {
-    footer.classList.remove("hide");
-  }
-
-  if (isInitializeHide) {
-    initialState.classList.add("hide");
-  } else {
-    initialState.classList.remove("hide");
-  }
-} catch (error) {}
-
-//getting the saving time from the localStorage
-let questionInterval;
-function QuestionTime() {
-  clearInterval(questionInterval); // clearing the first
-  let timerText = localStorage.getItem("questionTime") || 30;
-  timerText = Number(timerText);
-  questionInterval = setInterval(() => {
-    if (timerText <= 0) timerText = 30;
-    timerText--;
-    localStorage.setItem("questionTime", timerText);
-    timer.innerText = timerText;
-  }, 1000);
-}
-
-QuestionTime();
-
-// startBtn event
-startBtn.addEventListener("click", (e) => {
-  initialState.classList.add("hide");
-  footer.classList.remove("hide");
-  mainContainer.classList.remove("hide");
-
-  // --- storing classes of elements --- //
-
-  const footer_class = localStorage.setItem("footer_class", footer.classList);
-  const initialState_class = localStorage.setItem(
-    "initialState_class",
-    initialState.classList,
-  );
-  const mainContainer_class = localStorage.setItem(
-    "mainContainer_class",
-    mainContainer.classList,
-  );
-
-  QuestionTime();
-});
-
-// resetBtn
-
-resetBtn.addEventListener("click", (e) => {
-  // --- clearing the localStorage --- //
-  localStorage.clear();
-  initialState.classList.remove("hide");
-  mainContainer.classList.add("hide");
-  footer.classList.add("hide");
-  // --- stopping the time that runs in the background --- //
-  clearInterval(questionInterval);
-});
+const nextButton = document.querySelector(".nextButton>p");
+const questionDisplayPara = document.querySelector(".questionDisplayDiv>p");
+const questionCounterPara = document.querySelector(".questionCounter>p>span");
+const resetButton = document.querySelector(".resetBtn");
 
 const allQuestions = [
   ["Inside which HTML element do we put the JavaScript?"],
@@ -120,7 +38,7 @@ const allQuestions = [
 
 let allAnswers = [
   [`<js>, <scripting>, <javascript>, <script>`],
-  [`<class>, <font>, <style>, <style>`],
+  [`<class>, <font>, <style>, <id>`],
   [
     `"Hyper Text Markup Language","High Text Machine Language","Hyperlinks and Text Markup Language", "Home Tool Markup Language"`,
   ],
@@ -158,74 +76,73 @@ let allAnswers = [
   [`<ol> , <ul> , <li> , <list>`],
 ];
 
-// getting the question display elements from html
-let questionDisplayDiv = document.querySelector(".questionDisplayDiv>p");
-let questionCounterPara = document.querySelector(".questionCounter>p>span");
-let questionCounter = localStorage.getItem("questionCounter") || 0;
-questionCounter = Number(questionCounter);
+startBtn.addEventListener("click", () => {
+  startingState.classList.add("hide");
+  nextState.classList.remove("hide");
+  footer.classList.remove("hide");
+  startTime();
+});
 
-if (questionCounter >= 24) {
-  localStorage.setItem("questionCounter", 0);
-  questionCounter = 0;
+nextButton.addEventListener("click", () => {
+  clearInterval(time);
+  startTime();
+  updateQuestion();
+  updateAnswers();
+});
+
+let time;
+let questionTime;
+function startTime() {
+  clearInterval(time);
+  questionTime = 31;
+  time = setInterval(() => {
+    if (questionTime <= 0) questionTime = 30;
+    questionTime--;
+    timeDisplayPara.innerText = questionTime;
+    timeSaying();
+  }, 1000);
 }
 
-//
-questionDisplayDiv.innerText = allQuestions[questionCounter];
-questionCounterPara.innerText = questionCounter;
-
-let nextBtn = document.querySelector(".nextButton>p");
-
-function questionFun() {
-  questionCounter++;
-  if (questionCounter >= 24) {
-    localStorage.setItem("questionCounter", 0);
-    questionCounter = 0;
-  }
-  localStorage.setItem("questionCounter", questionCounter);
-  questionDisplayDiv.innerText = allQuestions[questionCounter];
+let questionCounter = 1;
+function updateQuestion() {
+  if (questionCounter >= 25) questionCounter = 0;
+  questionDisplayPara.innerText = allQuestions[questionCounter];
+  // updating questionCounter Paragraph
   questionCounterPara.innerText = questionCounter;
+  questionCounter++;
 }
 
-function answersFun() {
-  let index = 1;
-  separatedAnswers[questionCounter].forEach((innerArray) => {
-    const el = document.querySelector(`.answer-${index}>p`);
-    if (el) {
-      el.innerText = innerArray;
-    } else {
-    }
-    index++;
-  });
-}
-
-// saving the innerText of elements
-
-function savingAnswers() {
+function updateAnswers() {
+  let arr = [];
+  String(allAnswers[questionCounter - 1])
+    .split(",")
+    .forEach((val) => {
+      arr.push(val);
+    });
   for (let i = 1; i <= 4; i++) {
-    const answer = document.querySelector(`.answer-${i} > p`);
-    if (answer) {
-      localStorage.setItem(`answer-${i}`, answer.innerText);
-    }
+    let el = document.querySelector(`.answer-${i}`);
+    el.innerText = arr[i - 1];
   }
 }
 
-nextBtn.addEventListener("click", () => {
-  questionFun();
-  answersFun();
-  savingAnswers();
-  clearInterval(questionInterval);
-  localStorage.removeItem("questionTime");
-  QuestionTime();
+function resetBtnFun() {
+  localStorage.clear();
+  startingState.classList.remove("hide");
+  nextState.classList.add("hide");
+  footer.classList.add("hide");
+}
+
+resetButton.addEventListener("click", () => {
+  clearInterval(time);
+  questionCounter = 1;
+  resetBtnFun();
 });
 
-resetBtn.addEventListener("click", () => {
-  questionCounter = 0;
-  localStorage.setItem("questionCounter", 0);
-  window.location.reload();
-});
+function timeSaying() {
+  // time saving
+  localStorage.setItem("time", questionTime);
+}
 
-// showing the answers in web page
-
-const separatedAnswers = allAnswers.map((val) => {
-  return val[0].split(",");
-});
+startingState.classList.add("hide");
+nextState.classList.remove("hide");
+footer.classList.remove("hide");

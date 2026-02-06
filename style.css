@@ -58,6 +58,12 @@ body {
   opacity: 0;
 }
 
+.visible {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
 .imgDiv {
   max-height: 200px;
   max-width: 200px;
@@ -155,8 +161,10 @@ body {
 .answer-2:hover,
 .answer-3:hover,
 .answer-4:hover,
-.answer-5:hover {
+.answer-5:hover,
+.resetBtn:hover {
   cursor: pointer;
+  border: 2px solid black;
 }
 
 @media (max-width: 700px) {
@@ -184,6 +192,7 @@ footer {
 }
 
 footer .nextButton {
+  height: 32px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -193,7 +202,6 @@ footer .nextButton {
 .nextButton p {
   text-align: end;
   background-color: #35bd3a;
-  width: fit-content;
   padding: 5px 10px 5px 10px;
   color: #fff;
   font-weight: 600;
@@ -231,4 +239,8 @@ footer .ContactInfo {
   footer {
     padding: 0.5rem 5rem;
   }
+}
+
+.nextButton p {
+  border: 2px solid black;
 }
