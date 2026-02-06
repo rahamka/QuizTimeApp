@@ -142,7 +142,3 @@ function timeSaying() {
   // time saving
   localStorage.setItem("time", questionTime);
 }
-
-startingState.classList.add("hide");
-nextState.classList.remove("hide");
-footer.classList.remove("hide");
