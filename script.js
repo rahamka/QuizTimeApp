@@ -75,11 +75,28 @@ let allAnswers = [
   ],
   [`<ol> , <ul> , <li> , <list>`],
 ];
+let hide;
+let visible;
+function classesSaver() {
+  localStorage.setItem("visible", "visible");
+  localStorage.setItem("hide", "hide");
+  hide = localStorage.getItem("hide");
+  visible = localStorage.getItem("visible", "visible");
+  startingState.classList.add(hide);
+  nextState.classList.replace(hide, visible);
+  footer.classList.replace(hide, visible);
+}
+
+classesSaver();
+
+function classesUpdation() {
+  startingState.classList.replace(hide, visible);
+  nextState.classList.replace(visible, hide);
+  footer.classList.replace(visible, hide);
+}
 
 startBtn.addEventListener("click", () => {
-  startingState.classList.add("hide");
-  nextState.classList.remove("hide");
-  footer.classList.remove("hide");
+  classesSaver();
   startTime();
 });
 
@@ -125,20 +142,16 @@ function updateAnswers() {
   }
 }
 
-function resetBtnFun() {
-  localStorage.clear();
-  startingState.classList.remove("hide");
-  nextState.classList.add("hide");
-  footer.classList.add("hide");
-}
-
 resetButton.addEventListener("click", () => {
   clearInterval(time);
   questionCounter = 1;
-  resetBtnFun();
+  classesUpdation();
 });
 
 function timeSaying() {
   // time saving
   localStorage.setItem("time", questionTime);
 }
+
+// if user click on the Start Now >>> then save the classes of startingState
+// and nextState and footer

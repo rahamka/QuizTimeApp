@@ -1,6 +1,4 @@
 {
-    "livePreview.defaultPreviewPath": "/index.html",
-    "cSpell.words": [
-        "onmouseclick"
-    ]
+  "livePreview.defaultPreviewPath": "/index.html",
+  "cSpell.words": ["onmouseclick", "Updation"]
 }

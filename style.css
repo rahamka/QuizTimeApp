@@ -59,7 +59,8 @@ body {
 }
 
 .visible {
-  display: block;
+  display: flex;
+  flex-direction: column;
   visibility: visible;
   opacity: 1;
 }
